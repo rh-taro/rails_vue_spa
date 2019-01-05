@@ -1,0 +1,14 @@
+version: '3'
+volumes:
+  bundle:
+services:
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - bundle:/usr/local/bundle
+      - .:/usr/src/app:delegated
+    stdin_open: true
+    tty: true
+    command: /bin/sh
