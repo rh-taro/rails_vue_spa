@@ -6,6 +6,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - &&\
 ENV TZ=Asia/Tokyo
 
 COPY Gemfile .
+COPY Gemfile.lock .
 RUN bundle install
 
 WORKDIR /usr/src/app
