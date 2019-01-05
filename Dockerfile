@@ -5,8 +5,12 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - &&\
     apt-get install -y nodejs
 ENV TZ=Asia/Tokyo
 
+WORKDIR /usr/src/app
 COPY Gemfile .
 COPY Gemfile.lock .
 RUN bundle install
 
-WORKDIR /usr/src/app
+RUN mkdir frontend
+COPY frontend/package.json frontend/.
+COPY frontend/package-lock.json frontend/.
+RUN cd frontend && npm install
