@@ -1,60 +1,137 @@
 swagger: "2.0"
 info:
   version: "0.0.1"
-  title: Hello World App
-# during dev, should point to your local machine
+  title: Simple Post App
 host: localhost:10010
-# basePath prefixes all resource paths 
 basePath: /
-# 
 schemes:
-  # tip: remove http to make production-grade
   - http
-  - https
-# format of bodies a client can send (Content-Type)
 consumes:
   - application/json
-# format of the responses to the client (Accepts)
 produces:
   - application/json
 paths:
-  /hello:
-    # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
+  /posts:
     get:
-      description: Returns 'Hello' to the caller
-      # used as the method name of the controller
-      operationId: hello
       parameters:
-        - name: name
+        - name: page
           in: query
-          description: The name of the person to whom to say hello
-          required: false
-          type: string
+          type: integer
+          format: int64
+        - name: limit
+          in: query
+          type: integer
+          format: int64
       responses:
         "200":
-          description: Success
           schema:
-            # a pointer to a definition
-            $ref: "#/definitions/HelloWorldResponse"
-        # responses may fall through to errors
-        default:
-          description: Error
+            $ref: "#/definitions/PostListModel"
+          description: '' # これないとエラー
+    post:
+      parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/PostForCreateModel"
+      responses:
+        '200':
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            "$ref": "#/definitions/PostModel"
+          description: '' # これないとエラー
+    x-swagger-router-controller: dummy # これないとエラー
+  /posts/{id}:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true # これないとエラー
+        type: integer
+        format: int64
+      responses:
+        '200':
+          schema:
+            "$ref": "#/definitions/PostModel"
+          description: '' # これないとエラー
+    patch:
+      parameters:
+      - name: id
+        in: path
+        required: true # これないとエラー
+        type: integer
+        format: int64
+      - name: body
+        in: body
+        schema:
+          "$ref": "#/definitions/PostForUpdateModel"
+      responses:
+        '200':
+          schema:
+            "$ref": "#/definitions/PostModel"
+          description: '' # これないとエラー
+    delete:
+      parameters:
+      - name: id
+        in: path
+        required: true # これないとエラー
+        type: integer
+        format: int64
+      responses:
+        '200':
+          schema:
+            "$ref": "#/definitions/OkModel"
+          description: '' # これないとエラー
+    x-swagger-router-controller: dummy # これないとエラー
   /swagger:
     x-swagger-pipe: swagger_raw
-# complex objects have schema definitions
 definitions:
-  HelloWorldResponse:
-    required:
-      - message
+  OkModel:
+    type: object
     properties:
-      message:
+      status:
         type: string
-  ErrorResponse:
-    required:
-      - message
+        enum:
+        - ok
+  PostForUpdateModel:
+    type: object
     properties:
-      message:
+      title:
         type: string
+      body:
+        type: string
+  PostForCreateModel:
+    type: object
+    properties:
+      title:
+        type: string
+      body:
+        type: string
+  PostModel:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      title:
+        type: string
+      body:
+        type: string
+  PostListModel:
+    allOf:
+    - "$ref": "#/definitions/ListBaseModel"
+    - type: object
+      properties:
+        list:
+          type: array
+          items:
+            "$ref": "#/definitions/PostModel"
+  ListBaseModel:
+    type: object
+    properties:
+      count:
+        type: integer
+        format: int64
+      list:
+        type: array
+        items:
+          type: object
