@@ -6,6 +6,7 @@ services:
       - 10010:10010
     volumes:
       - .:/usr/src/app/swagger:delegated
+      - /usr/src/app/swagger/node_modules
     stdin_open: true
     tty: true
-    command: /bin/sh
+    command: swagger project start
